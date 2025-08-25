@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Week 1 - Web Fundamentals</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      section {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      h2 {
+        margin-top: 0;
+      }
+      button {
+        margin: 4px 0;
+        padding: 6px 12px;
+      }
+      input {
+        padding: 6px;
+        margin-right: 8px;
+      }
+      .card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 6px;
+      }
+      .muted {
+        font-size: 13px;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🚀 Tuần 1: Web Fundamentals</h1>
+
+    <!-- Day 1 -->
+    <section id="day1">
+      <h2>📅 Ngày 1: DOM cơ bản</h2>
+      <h3 id="title">Hello World</h3>
+      <button id="changeBtn">Change Text</button>
+    </section>
+
+    <!-- Day 2 -->
+    <section id="day2">
+      <h2>📅 Ngày 2: Events & addEventListener</h2>
+      <input id="nameInput" type="text" placeholder="Nhập tên của bạn" />
+      <button id="showBtn">Hiển thị</button>
+    </section>
+
+    <!-- Day 3 -->
+    <section id="day3">
+      <h2>📅 Ngày 3: Fetch API + JSON</h2>
+      <button id="loadBtn">Load Post</button>
+      <div id="result"></div>
+    </section>
+
+    <!-- Day 4 -->
+    <section id="day4">
+      <h2>📅 Ngày 4: ES6 Refactor</h2>
+      <button id="loadBtnEs6">Load Post (ES6)</button>
+      <pre id="out"></pre>
+    </section>
+
+    <!-- Day 5 -->
+    <section id="day5">
+      <h2>📅 Ngày 5: Mini Project – Click Counter</h2>
+      <p>Count: <strong id="count">0</strong></p>
+      <div>
+        <button id="incBtn">Click me</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+      <p class="muted">Counter được lưu vào <code>localStorage</code>.</p>
+    </section>
+
+    <script>
+      // Day 1
+      const titleEl = document.querySelector("#title");
+      const btn1 = document.querySelector("#changeBtn");
+      btn1.addEventListener("click", () => {
+        titleEl.textContent = "Hello Mentor";
+      });
+
+      // Day 2
+      const input = document.getElementById("nameInput");
+      const btn2 = document.getElementById("showBtn");
+      btn2.addEventListener("click", () => {
+        const value = input.value.trim();
+        if (!value) {
+          alert("Vui lòng nhập giá trị!");
+          input.focus();
+          return;
+        }
+        alert(`Xin chào, ${value}!`);
+      });
+
+      // Day 3
+      const btn3 = document.getElementById("loadBtn");
+      const result = document.getElementById("result");
+      btn3.addEventListener("click", async () => {
+        result.textContent = "Loading...";
+        try {
+          const res = await fetch(
+            "https://jsonplaceholder.typicode.com/posts/1"
+          );
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          result.innerHTML = `<div class="card"><h4>${data.title}</h4><p>${data.body}</p></div>`;
+        } catch (err) {
+          result.textContent = "Không thể tải dữ liệu.";
+        }
+      });
+
+      // Day 4
+      const btn4 = document.getElementById("loadBtnEs6");
+      const out = document.getElementById("out");
+      const fetchJson = async (url) => {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      };
+      const formatPost = ({ id, title, body }) =>
+        `#${id}\nTitle: ${title}\nBody: ${body}`;
+      btn4.addEventListener("click", async () => {
+        out.textContent = "Loading...";
+        try {
+          const data = await fetchJson(
+            "https://jsonplaceholder.typicode.com/posts/1"
+          );
+          const { id, title, body } = data;
+          out.textContent = formatPost({ id, title, body });
+        } catch (e) {
+          out.textContent = "Lỗi tải dữ liệu.";
+        }
+      });
+
+      // Day 5
+      const KEY = "click-counter";
+      const countEl = document.getElementById("count");
+      const incBtn = document.getElementById("incBtn");
+      const resetBtn = document.getElementById("resetBtn");
+
+      const getCount = () => Number(localStorage.getItem(KEY) ?? 0);
+      const setCount = (n) => localStorage.setItem(KEY, String(n));
+      const render = (n) => (countEl.textContent = n);
+
+      let count = getCount();
+      render(count);
+
+      incBtn.addEventListener("click", () => {
+        count += 1;
+        setCount(count);
+        render(count);
+      });
+
+      resetBtn.addEventListener("click", () => {
+        count = 0;
+        setCount(count);
+        render(count);
+      });
+    </script>
+  </body>
+</html>
